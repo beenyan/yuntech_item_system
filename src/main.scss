@@ -1,0 +1,61 @@
+a {
+    text-decoration: none;
+}
+
+.hover {
+    transition: 200ms;
+}
+
+.hover-scale:hover {
+    transform: scale(1.05);
+}
+
+@keyframes rainbow {
+    0% {
+        border-color: #ff0000;
+    }
+
+    14.28% {
+        border-color: #ff7f00;
+    }
+
+    28.56% {
+        border-color: #ffff00;
+    }
+
+    42.84% {
+        border-color: #00ff00;
+    }
+
+    57.12% {
+        border-color: #0000ff;
+    }
+
+    71.4% {
+        border-color: #4b0082;
+    }
+
+    85.68% {
+        border-color: #8a2be2;
+    }
+
+    100% {
+        border-color: #ff0000;
+    }
+}
+
+@for $i from 1 through 10 {
+    $rem: 0.25;
+
+    .gap-#{$i} {
+        gap: $i * $rem + rem $i * $rem + rem;
+    }
+
+    .gap-x-#{$i} {
+        column-gap: $i * $rem + rem;
+    }
+
+    .gap-y-#{$i} {
+        row-gap: $i * $rem + rem;
+    }
+}

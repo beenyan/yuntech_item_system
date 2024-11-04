@@ -1,0 +1,31 @@
+[package]
+name = "yuntech_item_system"
+version = "0.0.0"
+description = "雲科衛教中心 - 物品管理系統"
+authors = ["BeenYan <asdfghjkl42045@gmail.com>"]
+license = "MIT"
+repository = ""
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+tauri-build = { version = "1.5", features = [] }
+
+[dependencies]
+tauri = { version = "1.5", features = [ "fs-write-file", "fs-create-dir", "shell-open"] }
+serde = { version = "1.0", features = ["derive"] }
+serde_json = "1.0"
+mongodb = { version = "2.7.1", features = ["bson-chrono-0_4"] }
+tokio = { version = "1.35.1", features = ["full"] }
+chrono = { version = "0.4.31", features = ["serde"] }
+fern = "0.6.2"
+log = "0.4.20"
+anyhow = "1.0.79"
+dotenvy = "0.15.7"
+futures = "0.3.30"
+
+[features]
+# this feature is used for production builds or when `devPath` points to the filesystem
+# DO NOT REMOVE!!
+custom-protocol = ["tauri/custom-protocol"]

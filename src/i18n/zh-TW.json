@@ -1,0 +1,88 @@
+{
+  "title": "借物系統",
+  "setting": "設定",
+  "find": "查詢",
+  "insert": "新增",
+  "update": "修改",
+  "back": "返回",
+  "time": "時間",
+  "login": {
+    "key": "登入",
+    "ip": "IP",
+    "username": "帳號",
+    "password": "密碼"
+  },
+  "user": {
+    "id": "ID",
+    "name": "姓名",
+    "phone": "電話",
+    "type": {
+      "Borrower": "借物者",
+      "Manager": "經手者"
+    }
+  },
+  "item": {
+    "key": "物品",
+    "name": "物品名稱",
+    "type": {
+      "key": "物品類型",
+      "Borrower": "出借物品",
+      "Mortgage": "抵押證件"
+    }
+  },
+  "lend": {
+    "money": "金錢",
+    "lend_time": "借出時間",
+    "due_date": "到期時間",
+    "return_date": "歸還時間",
+    "amount": "數量",
+    "remark": "備註",
+    "return": "歸還",
+    "type": {
+      "return": "已歸還",
+      "not_returned": "未歸還",
+      "over_due": "逾期"
+    }
+  },
+  "menu": {
+    "home": "首頁",
+    "login": "登入",
+    "lend-item": "出借物品",
+    "return-item": "歸還物品",
+    "manage": "後台管理",
+    "logout": "登出"
+  },
+  "rule": {
+    "ip": "IP 格式錯誤",
+    "format": "格式錯誤",
+    "empty": "此地毫無生機",
+    "positiveNumber": "必須正整數"
+  },
+  "form": {
+    "reset": "重設",
+    "submit": "送出",
+    "update": "修改",
+    "lock": "鎖定",
+    "unlock": "未鎖定",
+    "cancel": "取消",
+    "delete": "刪除",
+    "confirm": "確認"
+  },
+  "manage": {
+    "menu": {
+      "user": "人員管理",
+      "item": "物品管理",
+      "lend-item": "出借管理"
+    }
+  },
+  "message": {
+    "loginSuccess": "登入成功",
+    "logoutSuccess": "登出成功",
+    "insertSuccess": "新增成功",
+    "returnSuccess": "歸還成功",
+    "updateSuccess": "更新成功",
+    "deleteSuccess": "刪除成功",
+    "exportSuccess": "匯出成功",
+    "exportFailed": "匯出失敗"
+  }
+}
