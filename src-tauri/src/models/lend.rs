@@ -5,6 +5,7 @@ use crate::{
     utils::{default::option_deserialize_bson_datetime_from_rfc3339_string, my_result::ErrMsg},
 };
 use anyhow::{anyhow, Result};
+use chrono::{NaiveDate, TimeZone, Utc};
 use futures::TryStreamExt;
 use mongodb::bson::Bson;
 use mongodb::results::DeleteResult;
@@ -160,6 +161,48 @@ impl LendView {
     ) -> Result<Vec<Self>> {
         let coll = db.collection::<Self>(Coll::VIEW_LEND);
         let lends = coll.find(filter, options).await?;
+        let lends = lends.try_collect::<Vec<Self>>().await?;
+
+        Ok(lends)
+    }
+
+    pub async fn lend_history_find_by_year(db: &Database, year: i32) -> Result<Vec<Self>> {
+        let start_date_time = DateTime::from_chrono(
+            Utc.from_utc_datetime(
+                &NaiveDate::from_yo_opt(year, 1)
+                    .unwrap()
+                    .and_hms_opt(0, 0, 0)
+                    .unwrap(),
+            ),
+        );
+        let end_date_time = DateTime::from_chrono(
+            Utc.from_utc_datetime(
+                &NaiveDate::from_yo_opt(year + 1, 1)
+                    .unwrap()
+                    .and_hms_opt(0, 0, 0)
+                    .unwrap(),
+            ),
+        );
+
+        let coll = db.collection::<Self>(Coll::VIEW_LEND);
+        let filter = doc! {
+            "$or": [
+                {
+                    "lend_date_time": {
+                        "$gte": start_date_time,
+                        "$lt": end_date_time
+                    }
+                },
+                {
+                    "return_date": {
+                        "$gte": start_date_time,
+                        "$lt": end_date_time
+                    }
+                }
+            ]
+        };
+
+        let lends = coll.find(filter, None).await?;
         let lends = lends.try_collect::<Vec<Self>>().await?;
 
         Ok(lends)

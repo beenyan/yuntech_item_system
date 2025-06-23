@@ -91,6 +91,12 @@ impl<T: Serialize> Into<MyResult<T>> for anyhow::Result<T> {
     }
 }
 
+impl<T: Serialize> From<T> for MyResult<T> {
+    fn from(value: T) -> Self {
+        MyResult::Success(Success::new(value))
+    }
+}
+
 fn error_to_string(error: &anyhow::Error) -> String {
     if let Some(err) = error.downcast_ref::<mongodb::error::Error>() {
         return match *err.kind.clone() {

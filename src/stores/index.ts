@@ -3,3 +3,4 @@ export { useSettingStore } from './Setting';
 export { useUserStore } from './User';
 export { useItemStore } from './Item';
 export { useLendItemStore } from './LendItem';
+export { useMaintenanceItemStore } from './MaintenanceItem';

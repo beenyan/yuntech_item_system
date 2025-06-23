@@ -2,7 +2,7 @@ import { t } from '@/i18n';
 import { BaseDirectory, createDir, writeBinaryFile } from '@tauri-apps/api/fs';
 import { Workbook } from 'exceljs';
 import { Notify } from 'quasar';
-import { formatChineseDate } from '.';
+import { formatChineseDateTime } from '.';
 
 const FolderName = 'Health Item';
 
@@ -16,7 +16,7 @@ export class ExportData {
   }
 }
 
-export const exportExcelReport = async (data: ExportData, fileName: string = formatChineseDate(new Date())) => {
+export const exportExcelReport = async (data: ExportData, fileName: string = formatChineseDateTime(new Date())) => {
   try {
     await createDir(FolderName, { dir: BaseDirectory.Document, recursive: true });
 

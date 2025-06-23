@@ -49,5 +49,11 @@ export const useLendItemStore = defineStore('LendItem', () => {
     return await exportExcelReport(new ExportData(content, header));
   };
 
-  return { form, returnForm, find, deleteById, getByType, value, exportExcel };
+  const getLendHistoryByYear = async (year: number) => {
+    const result = await cmd.lendItem.lendHistoryFindByYear.invoke(z.array(LendItemSchema), { year });
+
+    return result;
+  };
+
+  return { form, returnForm, find, deleteById, getByType, value, exportExcel, getLendHistoryByYear };
 });

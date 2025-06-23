@@ -21,7 +21,7 @@
             </div>
 
             <div class="col-auto">
-              <QChip color="brown-14" icon="event">{{ formatChineseDate(lendItem.due_date) }}</QChip>
+              <QChip color="brown-14" icon="event">{{ formatChineseDateTime(lendItem.due_date) }}</QChip>
               <QTooltip class="bg-indigo"> {{ t('lend.due_date') }} </QTooltip>
             </div>
           </div>
@@ -65,7 +65,7 @@ import { Notify, QBtn, QCard, QChip, QExpansionItem, QIcon, QItemSection, QList,
 import { t } from '@/i18n';
 import { useLendItemStore } from '@/stores';
 import { LendItem } from '@/models/LendItem';
-import { formatChineseDate } from '@/utils';
+import { formatChineseDateTime } from '@/utils';
 import { CardContent } from '@/components/Utils';
 import { ConfirmDialog } from '@/components/Dialog';
 import { ref } from 'vue';

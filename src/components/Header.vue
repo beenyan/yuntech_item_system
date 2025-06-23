@@ -37,6 +37,7 @@ const setting = useSettingStore();
 const appName = ref('');
 const menuList = ref([
   { to: '/manage/lend-item/insert', label: t('menu.lend-item'), icon: 'how_to_vote' },
+  { to: '/manage/maintenance-item/insert', label: t('menu.maintenance-item'), icon: 'construction' },
   { to: '/manage', label: t('menu.manage'), icon: 'lock', separator: true },
   {
     to: '/manage/lend-item/list',
@@ -52,9 +53,19 @@ const menuList = ref([
     to: '/manage/item/list',
     icon: 'category',
     label: t('manage.menu.item'),
+  },
+  {
+    to: '/manage/maintenance-item/list',
+    label: t('manage.menu.maintenance'),
+    icon: 'construction',
     separator: true,
   },
-  // { icon: 'settings', label: t('setting'), separator: true },
+  {
+    to: '/export/lend_history',
+    icon: 'screen_share',
+    label: t('export.lend_history'),
+    separator: true,
+  },
   {
     label: t('menu.logout'),
     icon: 'logout',

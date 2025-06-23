@@ -13,4 +13,6 @@ export const convertToBoolean = (value: string | boolean) => {
     .otherwise(() => false);
 };
 export const formatISODate = (dateTime: string | number | Date | undefined) => date.formatDate(dateTime, 'YYYY-MM-DDTHH:mm:ss.SSSZ');
-export const formatChineseDate = (dateTime: string | number | Date | undefined) => date.formatDate(dateTime, 'YYYY 年 MM 月 DD 日 HH:mm:ss');
+export const formatChineseDateTime = (dateTime: string | number | Date | undefined) => date.formatDate(dateTime, 'YYYY 年 MM 月 DD 日 HH:mm:ss');
+export const formatChineseDate = (dateTime: string | number | Date | undefined) => date.formatDate(dateTime, 'YYYY 年 MM 月 DD 日');
+export const formatROCDate = (dateTime: Date) => `${dateTime.getFullYear() - 1911}年 ${dateTime.getMonth() + 1}月 ${dateTime.getDate()}日`;

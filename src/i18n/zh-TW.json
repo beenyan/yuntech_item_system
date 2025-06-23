@@ -44,10 +44,22 @@
       "over_due": "逾期"
     }
   },
+  "maintenance": {
+    "key": "保養",
+    "item": "保養物品",
+    "start_time": "保養開始時間",
+    "end_time": "保養結束時間",
+    "manager": "保養經手者",
+    "remark": "保養備註",
+    "cause": "保養原因",
+    "content": "保養內容",
+    "cost": "保養費用"
+  },
   "menu": {
     "home": "首頁",
     "login": "登入",
     "lend-item": "出借物品",
+    "maintenance-item": "保養物品",
     "return-item": "歸還物品",
     "manage": "後台管理",
     "logout": "登出"
@@ -55,7 +67,7 @@
   "rule": {
     "ip": "IP 格式錯誤",
     "format": "格式錯誤",
-    "empty": "此地毫無生機",
+    "empty": "這裡忘記寫囉",
     "positiveNumber": "必須正整數"
   },
   "form": {
@@ -72,8 +84,12 @@
     "menu": {
       "user": "人員管理",
       "item": "物品管理",
-      "lend-item": "出借管理"
+      "lend-item": "出借管理",
+      "maintenance": "保養管理"
     }
+  },
+  "export": {
+    "lend_history": "借物紀錄匯出"
   },
   "message": {
     "loginSuccess": "登入成功",

@@ -7,8 +7,7 @@ import { date } from 'quasar';
 import { ItemSchema } from './Item';
 import { cloneDeep } from 'lodash';
 import { t } from '@/i18n';
-import { formatChineseDate } from '@/utils';
-import { ExportData } from '@/utils/Export';
+import { formatChineseDateTime } from '@/utils';
 
 export const LendItemSchema = z
   .object({
@@ -57,9 +56,9 @@ export const LendItemSchema = z
           {
             label: t('time'),
             items: [
-              { title: t('lend.lend_time'), value: formatChineseDate(value.lend_date_time) },
-              { title: t('lend.due_date'), value: formatChineseDate(value.due_date) },
-              value.return_date ? { title: t('lend.return_date'), value: formatChineseDate(value.return_date) } : null,
+              { title: t('lend.lend_time'), value: formatChineseDateTime(value.lend_date_time) },
+              { title: t('lend.due_date'), value: formatChineseDateTime(value.due_date) },
+              value.return_date ? { title: t('lend.return_date'), value: formatChineseDateTime(value.return_date) } : null,
             ].filter((x) => x !== null),
           },
         ];
@@ -83,7 +82,6 @@ export const LendItemSchema = z
   });
 
 export type LendItem = z.infer<typeof LendItemSchema>;
-export type LendItemA = typeof LendItemSchema._output;
 export type Type = 'return' | 'notReturn' | 'overDue';
 export type Method = 'insert' | 'update';
 

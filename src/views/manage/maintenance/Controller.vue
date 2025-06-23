@@ -1,15 +1,15 @@
 <template>
   <div class="q-pa-md">
     <div class="row justify-center q-gutter-sm">
-      <template v-for="menuItem in menuList">
-        <CRouterLink class="hover hover-scale" :to="menuItem.to">
+      <template v-for="menuMaintenance in menuList">
+        <CRouterLink class="hover hover-scale" :to="menuMaintenance.to">
           <QIntersection transition="scale">
             <QCard flat bordered class="q-ma-sm card">
               <QCardSection class="bg-primary">
                 <div class="text-h6">
-                  <QIcon class="q-mr-sm" :name="menuItem.icon" />
+                  <QIcon class="q-mr-sm" :name="menuMaintenance.icon" />
 
-                  <span>{{ menuItem.title }}</span>
+                  <span>{{ menuMaintenance.title }}</span>
                 </div>
               </QCardSection>
             </QCard>
@@ -24,28 +24,24 @@
 import { QCard, QCardSection, QIcon, QIntersection } from 'quasar';
 import { ref } from 'vue';
 import { t } from '@/i18n';
+
 import { CRouterLink } from '@/components';
 
 const menuList = ref([
   {
-    to: 'lend-item',
-    icon: 'how_to_vote',
-    title: t('manage.menu.lend-item'),
+    to: 'list',
+    icon: 'search',
+    title: `${t('find')}、${t('update')}`,
   },
   {
-    to: 'person',
-    icon: 'people',
-    title: t('manage.menu.user'),
+    to: 'insert',
+    icon: 'post_add',
+    title: t('insert'),
   },
   {
-    to: 'item',
-    icon: 'category',
-    title: t('manage.menu.item'),
-  },
-  {
-    to: 'maintenance-item',
-    icon: 'construction',
-    title: t('manage.menu.maintenance'),
+    to: '../',
+    icon: 'undo',
+    title: t('back'),
   },
 ]);
 </script>

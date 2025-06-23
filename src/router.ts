@@ -72,7 +72,29 @@ const router = createRouter({
             },
           ],
         },
+        {
+          path: 'maintenance-item',
+          component: CRouterView,
+          children: [
+            {
+              path: '',
+              component: () => import('./views/manage/maintenance/Controller.vue'),
+            },
+            {
+              path: 'list',
+              component: () => import('./views/manage/maintenance/List.vue'),
+            },
+            {
+              path: 'insert',
+              component: () => import('./views/manage/maintenance/Insert.vue'),
+            },
+          ],
+        },
       ],
+    },
+    {
+      path: '/export',
+      children: [{ path: 'lend_history', component: () => import('./views/export/lend_history_export.vue') }],
     },
   ],
 });

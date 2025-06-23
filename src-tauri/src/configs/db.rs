@@ -9,9 +9,11 @@ pub struct Coll {}
 #[allow(dead_code)]
 impl Coll {
     pub const USER: &'static str = "users";
+    pub const MAINTENANCE: &'static str = "maintenances";
     pub const ITEM: &'static str = "items";
     pub const LEND: &'static str = "lends";
     pub const VIEW_LEND: &'static str = "view_lends";
+    pub const VIEW_MAINTENANCE: &'static str = "view_maintenances";
 }
 
 pub async fn connect(host: &str, username: &str, password: &str) -> Result<Database> {

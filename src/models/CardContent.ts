@@ -1,4 +1,4 @@
 export type CardItem = {
-  title: string;
+  title?: string;
   value: string | number | null;
 };

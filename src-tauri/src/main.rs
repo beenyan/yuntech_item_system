@@ -22,6 +22,7 @@ async fn main() -> Result<()> {
     tauri::Builder::default()
         .manage(Mutex::new(AuthState::default()))
         .invoke_handler(tauri::generate_handler![
+            get_export_history_years,
             auth::is_login,
             auth::login,
             auth::logout,
@@ -36,6 +37,12 @@ async fn main() -> Result<()> {
             lend::lend_update_one,
             lend::return_lend_item,
             lend::lend_delete_one,
+            lend::lend_history_find_by_year,
+            maintenance::maintenance_find,
+            maintenance::maintenance_insert_one,
+            maintenance::maintenance_update_by_id,
+            maintenance::maintenance_delete_by_id,
+            maintenance::maintenance_history_find_by_year
         ])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");

@@ -55,6 +55,7 @@ const cmd = {
   login: new Command('login'),
   isLogin: new Command('is_login'),
   logout: new Command('logout'),
+  getExportHistoryYears: new Command('get_export_history_years'),
   user: {
     insert_one: new Command('user_insert_one'),
     update_one: new Command('user_update_one'),
@@ -71,6 +72,14 @@ const cmd = {
     insert_one: new Command('lend_insert_one'),
     update_one: new Command('lend_update_one'),
     find: new Command('lend_find'),
+    lendHistoryFindByYear: new Command('lend_history_find_by_year'),
+  },
+  maintenanceItem: {
+    delete_by_id: new Command('maintenance_delete_by_id'),
+    insert_one: new Command('maintenance_insert_one'),
+    update_by_id: new Command('maintenance_update_by_id'),
+    find: new Command('maintenance_find'),
+    historyFindByYear: new Command('maintenance_history_find_by_year'),
   },
 };
 

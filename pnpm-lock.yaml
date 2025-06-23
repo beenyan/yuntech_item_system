@@ -14,6 +14,9 @@ dependencies:
   '@types/lodash':
     specifier: ^4.17.0
     version: 4.17.0
+  docxtemplater:
+    specifier: ^3.62.2
+    version: 3.62.2
   exceljs:
     specifier: ^4.4.0
     version: 4.4.0
@@ -23,6 +26,9 @@ dependencies:
   pinia:
     specifier: ^2.1.7
     version: 2.1.7(typescript@5.4.3)(vue@3.4.21)
+  pizzip:
+    specifier: ^3.2.0
+    version: 3.2.0
   quasar:
     specifier: ^2.15.1
     version: 2.15.1
@@ -2473,6 +2479,11 @@ packages:
       '@xtuc/long': 4.2.2
     dev: true
 
+  /@xmldom/xmldom@0.9.8:
+    resolution: {integrity: sha512-p96FSY54r+WJ50FIOsCOjyj/wavs8921hG5+kVMmZgKcvIKxMXHTrjNJvRgWa/zuX3B6t2lijLNFaOyuxUH+2A==}
+    engines: {node: '>=14.6'}
+    dev: false
+
   /@xtuc/ieee754@1.2.0:
     resolution: {integrity: sha512-DX8nKgqcGwsc0eJSqYt5lwP4DH5FlHnmuWWBRy7X0NcaGR0ZtuyeESgMwTYVEtxmsNGY+qit4QYT/MIYTOTPeA==}
     dev: true
@@ -3568,6 +3579,13 @@ packages:
     dependencies:
       buffer-indexof: 1.1.1
     dev: true
+
+  /docxtemplater@3.62.2:
+    resolution: {integrity: sha512-G3tqcsyHrtdKhKK7i9T81fBOk1gLRPuIU5nj/pEqeRkD2wgtdJrXztyHx65A7Yj7x2hj6YpzSMVy/sm+uaHCGg==}
+    engines: {node: '>=0.10'}
+    dependencies:
+      '@xmldom/xmldom': 0.9.8
+    dev: false
 
   /dom-converter@0.2.0:
     resolution: {integrity: sha512-gd3ypIPfOMr9h5jIKq8E3sHOTCjeirnl0WK5ZdS1AW0Odt0b1PaWaHdJ4Qk4klv+YB9aJBS7mESXjFoDQPu6DA==}
@@ -5312,6 +5330,10 @@ packages:
     resolution: {integrity: sha512-4hLB8Py4zZce5s4yd9XzopqwVv/yGNhV1Bl8NTmCq1763HeK2+EwVTv+leGeL13Dnh2wfbqowVPXCIO0z4taYw==}
     dev: false
 
+  /pako@2.1.0:
+    resolution: {integrity: sha512-w+eufiZ1WuJYgPXbV/PO3NCMEc3xqylkKHzp8bxp1uW4qaSNQUkwmLLEc3kKsfz8lpV1F8Ht3U1Cm+9Srog2ug==}
+    dev: false
+
   /param-case@2.1.1:
     resolution: {integrity: sha512-eQE845L6ot89sk2N8liD8HAuH4ca6Vvr7VWAWwt7+kvvG5aBcPmmphQ68JsEG2qa9n1TykS2DLeMt363AAH8/w==}
     dependencies:
@@ -5413,6 +5435,12 @@ packages:
       typescript: 5.4.3
       vue: 3.4.21(typescript@5.4.3)
       vue-demi: 0.14.7(vue@3.4.21)
+    dev: false
+
+  /pizzip@3.2.0:
+    resolution: {integrity: sha512-X4NPNICxCfIK8VYhF6wbksn81vTiziyLbvKuORVAmolvnUzl1A1xmz9DAWKxPRq9lZg84pJOOAMq3OE61bD8IQ==}
+    dependencies:
+      pako: 2.1.0
     dev: false
 
   /pkg-dir@4.2.0:

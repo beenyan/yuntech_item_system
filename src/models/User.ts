@@ -85,6 +85,5 @@ export class UserForm {
     if (type) {
       this.type = type;
     }
-    console.log(this);
   }
 }

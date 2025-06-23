@@ -7,6 +7,7 @@ use crate::{
 };
 use mongodb::{
     bson::{doc, oid::ObjectId},
+    options::FindOptions,
     results::{DeleteResult, UpdateResult},
 };
 use std::sync::Mutex;
@@ -45,7 +46,15 @@ pub async fn lend_find(auth: State<'_, Mutex<AuthState>>) -> Result<MyResult<Vec
         Err(err) => return Ok(Err(err).into()),
     };
 
-    Ok(LendView::find(&db, None, None).await.into())
+    let options = FindOptions::builder()
+        .sort(doc! {
+            "return_date": 1,
+            "lend_date_time": 1
+        })
+        .limit(50)
+        .build();
+
+    Ok(LendView::find(&db, None, options).await.into())
 }
 
 #[tauri::command]
@@ -72,4 +81,17 @@ pub async fn lend_delete_one(
     };
 
     Ok(Lend::delete_one(&db, _id).await.into())
+}
+
+#[tauri::command]
+pub async fn lend_history_find_by_year(
+    auth: State<'_, Mutex<AuthState>>,
+    year: i32,
+) -> Result<MyResult<Vec<LendView>>, ()> {
+    let db = match auth.lock().unwrap().get_db() {
+        Ok(db) => db,
+        Err(err) => return Ok(Err(err).into()),
+    };
+
+    Ok(LendView::lend_history_find_by_year(&db, year).await.into())
 }
