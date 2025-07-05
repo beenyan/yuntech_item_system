@@ -2,7 +2,7 @@ import { useItemStore, useLendItemStore, useMaintenanceItemStore } from '@/store
 import { BaseDirectory, createDir, readBinaryFile, writeBinaryFile } from '@tauri-apps/api/fs';
 import Docxtemplater from 'docxtemplater';
 import PizZip from 'pizzip';
-import { z } from 'zod';
+import { unknown, z } from 'zod';
 import { LendItemSchema } from './LendItem';
 import { MaintenanceItem } from './MaintenanceItem';
 import { formatROCDate } from '@/utils';
@@ -11,13 +11,15 @@ class MaintenanceItemsExport {
   id: number;
   name: string;
   content: string;
+  cause: string;
   start_date: string;
   end_date: string;
   manager: string;
   constructor(id: number, maintenanceData: MaintenanceItem) {
     this.id = id;
-    this.name = maintenanceData.item.name;
+    this.name = typeof maintenanceData.item === 'string' ? maintenanceData.item : maintenanceData.item.name;
     this.content = maintenanceData.content;
+    this.cause = maintenanceData.cause;
     this.start_date = formatROCDate(maintenanceData.start_date);
     this.end_date = formatROCDate(maintenanceData.end_date);
     this.manager = maintenanceData.manager.name;
@@ -32,14 +34,11 @@ const summarizeByYear = async (data: LendItem[], maintenanceDatas: MaintenanceIt
   if (!items) throw new Error('Items not found');
 
   const borrowerNames = items.filter((e) => e.type === 'Borrower').map((e) => e.name);
-
   const baseItemStructure = borrowerNames.map((name) => ({
     name,
     amount: 0,
   }));
-
   const months = ['一月', '二月', '三月', '四月', '五月', '六月', '七月', '八月', '九月', '十月', '十一月', '十二月'];
-
   const monthlySummary = months.map((month_title) => ({
     month_title,
     items: baseItemStructure.map((item) => ({ ...item })),
@@ -52,9 +51,12 @@ const summarizeByYear = async (data: LendItem[], maintenanceDatas: MaintenanceIt
 
     const monthIndex = date.getMonth();
     const targetMonth = monthlySummary[monthIndex];
-    const targetItem = targetMonth.items.find((item) => item.name === entry.lend_item.name);
+    const itemName = typeof entry.lend_item === 'string' ? entry.lend_item : entry.lend_item.name;
+    const targetItem = targetMonth.items.find((item) => item.name === itemName);
     if (targetItem) {
       targetItem.amount += entry.lend_item_amount;
+    } else {
+      targetMonth.items.push({ name: itemName, amount: entry.lend_item_amount });
     }
   }
 
@@ -72,6 +74,10 @@ const summarizeByYear = async (data: LendItem[], maintenanceDatas: MaintenanceIt
       } else {
         groups[groups.length - 1].inner.push(item);
       }
+      if (items.length % 2 === 1 && items.length - 1 === index) {
+        groups[groups.length - 1].inner.push({ name: '', amount: null as unknown as number });
+      }
+
       return groups;
     }, [] as Array<{ inner: { name: string; amount: number }[] }>),
     maintenance_items,
@@ -91,13 +97,13 @@ export const exportLendHistory = async (year: number) => {
   const threeDayDateTime = 3 * 24 * 60 * 60 * 1000;
   const unreturnedUsers = lendHistoryDatas.reduce((acc, entry) => {
     if (!entry.return_date && entry.due_date.getTime() - threeDayDateTime < Date.now()) {
-      const due_date = `${entry.due_date.getFullYear() - 1911}年 ${entry.due_date.getMonth() + 1}月 ${entry.due_date.getDate()}日`;
+      const due_date = formatROCDate(entry.due_date);
 
       acc.push({
         id: entry.borrower_user.id,
         name: entry.borrower_user.name,
         phone: entry.borrower_user.phone,
-        item_name: entry.lend_item.name,
+        item_name: typeof entry.lend_item === 'string' ? entry.lend_item : entry.lend_item.name,
         due_date,
       });
     }
@@ -114,7 +120,6 @@ export const exportLendHistory = async (year: number) => {
     months: await summarizeByYear(lendHistoryDatas, maintenanceHistoryDatas, year, 'return_date'),
     unreturnedUsers,
   };
-  console.log(lendWord);
 
   await createDir('Health Item', { dir: BaseDirectory.Document, recursive: true });
   const buffer = await readBinaryFile(`./resources/lend_history.docx`, { dir: BaseDirectory.Resource });

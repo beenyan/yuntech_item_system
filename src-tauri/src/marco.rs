@@ -4,7 +4,7 @@ macro_rules! doc_update {
         let mut update = doc! {};
         $(
             if let Some(value) = $value {
-                update.insert($key, value);
+                update.insert($key, value.clone());
             }
         )*
 

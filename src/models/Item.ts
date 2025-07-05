@@ -3,29 +3,15 @@ import { cmd } from './Command';
 import { DateTimeSchema, InsertOneResultSchema, ObjectIdSchema, UpdateResultSchema } from './Mongodb';
 import { z } from 'zod';
 import { t } from '@/i18n';
-import { ExportData } from '@/utils/Export';
 
-export const ItemSchema = z
-  .object({
-    _id: ObjectIdSchema,
-    name: z.string(),
-    type: z.enum(['Borrower', 'Mortgage']),
-    is_lock: z.boolean().default(false),
-    updated_at: DateTimeSchema,
-    created_at: DateTimeSchema,
-  })
-  .transform((value) => {
-    return {
-      ...value,
-      get exportData() {
-        const type = value.type === 'Borrower' ? t('item.type.Borrower') : t('item.type.Mortgage');
-        const header = [`${type} - ${t('item.name')}`];
-        const content = [[value.name]];
-
-        return new ExportData(content, header);
-      },
-    };
-  });
+export const ItemSchema = z.object({
+  _id: ObjectIdSchema,
+  name: z.string(),
+  type: z.enum(['Borrower', 'Mortgage']),
+  is_lock: z.boolean().default(false),
+  updated_at: DateTimeSchema,
+  created_at: DateTimeSchema,
+});
 
 export type ItemType = typeof ItemSchema._type.type;
 export type Item = z.infer<typeof ItemSchema>;

@@ -1,21 +1,30 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { z } from 'zod';
-import { LendItem, LendItemForm, LendItemSchema, ReturnLendFrom, Type } from '@/models/LendItem';
+import { LendItem, LendItemFilter, LendItemForm, LendItemSchema, ReturnLendFrom, Type } from '@/models/LendItem';
 import { cmd } from '@/models/Command';
 import { DeleteResultSchema } from '@/models/Mongodb';
-import { ExportData, exportExcelReport } from '@/utils/Export';
+import { exportExcelReport } from '@/utils/Export';
+import { t } from '@/i18n';
 
 export const useLendItemStore = defineStore('LendItem', () => {
   const form = ref(new LendItemForm());
   const returnForm = ref(new ReturnLendFrom());
-  const _value = ref<Array<LendItem> | null>(null);
+  const filter = ref(new LendItemFilter());
+  const _value = ref<LendItem[] | null>(null);
+  const _filterValue = ref<LendItem[]>([]);
 
   const find = async () => {
-    const result = await cmd.lendItem.find.invoke(z.array(LendItemSchema));
+    const result = await cmd.lendItem.find_not_return.invoke(z.array(LendItemSchema));
     _value.value = result;
 
     return _value.value;
+  };
+
+  const findByFilter = async () => {
+    _filterValue.value = (await cmd.lendItem.find_by_filter.invoke(z.array(LendItemSchema), { filter: filter.value.toJSON() })) ?? [];
+
+    return _filterValue.value;
   };
 
   const value = async () => {
@@ -42,11 +51,7 @@ export const useLendItemStore = defineStore('LendItem', () => {
   };
 
   const exportExcel = async () => {
-    const values = (await value()) || [];
-
-    const header = [''];
-    const content = [[]];
-    return await exportExcelReport(new ExportData(content, header));
+    return await exportExcelReport(_filterValue.value, t('menu.lend-item'));
   };
 
   const getLendHistoryByYear = async (year: number) => {
@@ -55,5 +60,5 @@ export const useLendItemStore = defineStore('LendItem', () => {
     return result;
   };
 
-  return { form, returnForm, find, deleteById, getByType, value, exportExcel, getLendHistoryByYear };
+  return { form, filter, returnForm, find, findByFilter, deleteById, exportExcel, getByType, value, getLendHistoryByYear };
 });

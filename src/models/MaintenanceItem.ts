@@ -11,7 +11,7 @@ import { formatChineseDate } from '@/utils';
 export const MaintenanceItemSchema = z
   .object({
     _id: ObjectIdSchema,
-    item: ItemSchema,
+    item: z.union([ItemSchema, z.string()]),
     manager: UserSchema,
     cost: z.number().min(0),
     content: z.string(),
@@ -25,12 +25,12 @@ export const MaintenanceItemSchema = z
   .transform((value) => {
     return {
       ...value,
-      get card_contents() {
+      get cardContent() {
         const contensts = [
           value.manager.cardContent,
           {
             label: t('maintenance.item'),
-            items: [{ title: t('item.name'), value: value.item.name }],
+            items: [{ title: t('item.name'), value: typeof value.item === 'string' ? value.item : value.item.name }],
           },
           {
             label: t('time'),
@@ -85,7 +85,8 @@ export class MaintenanceItemForm {
       }
     });
 
-    (['item', 'manager'] as const).forEach((key) => (this[key] = item[key]._id));
+    this.manager = item.manager._id;
+    this.item = typeof item.item === 'string' ? item.item : item.item._id;
   }
 
   async insert() {
@@ -105,5 +106,27 @@ export class MaintenanceItemForm {
 
   reset() {
     Object.assign(this, new MaintenanceItemForm());
+  }
+}
+
+export class MaintenanceFilter implements Pick<MaintenanceItemForm, 'item' | 'manager' | 'content' | 'cause' | 'start_date' | 'end_date' | 'remark'> {
+  item = '';
+  manager = '';
+  content = '';
+  cause = '';
+  start_date: Date = date.addToDate(date.startOfDate(new Date(), 'date'), { month: -12 });
+  end_date: Date = date.endOfDate(new Date(), 'date');
+  remark = '';
+
+  toJSON() {
+    return {
+      item: this.item,
+      manager: this.manager,
+      content: this.content,
+      cause: this.cause,
+      start_date: this.start_date.toISOString(),
+      end_date: this.end_date.toISOString(),
+      remark: this.remark,
+    };
   }
 }

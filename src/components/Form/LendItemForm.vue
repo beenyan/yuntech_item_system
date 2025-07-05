@@ -37,6 +37,10 @@
           <div class="row gap-x-4 q-gutter-y-md">
             <QSelect
               filled
+              use-input
+              fill-input
+              hide-selected
+              new-value-mode="add"
               class="col-12 col-sm-8"
               :hide-bottom-space="true"
               v-model.trim="lendItem.form.lend_item"

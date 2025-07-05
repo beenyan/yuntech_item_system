@@ -51,7 +51,7 @@
       <!-- CONTENT -->
       <QCard>
         <QList class="row gap-4 q-pa-lg">
-          <CardContent v-for="content in lendItem.card_contents" :content="content" />
+          <CardContent v-for="content in lendItem.cardContent" :content="content" />
         </QList>
       </QCard>
     </QExpansionItem>

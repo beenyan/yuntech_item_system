@@ -1,13 +1,12 @@
 use crate::{
     models::{
-        lend::{Lend, LendUpdate, LendView, ReturnLendItem},
+        lend::{Lend, LendItemFilter, LendUpdate, LendView, ReturnLendItem},
         login::AuthState,
     },
     utils::my_result::MyResult,
 };
 use mongodb::{
     bson::{doc, oid::ObjectId},
-    options::FindOptions,
     results::{DeleteResult, UpdateResult},
 };
 use std::sync::Mutex;
@@ -40,21 +39,34 @@ pub async fn lend_update_one(
 }
 
 #[tauri::command]
-pub async fn lend_find(auth: State<'_, Mutex<AuthState>>) -> Result<MyResult<Vec<LendView>>, ()> {
+pub async fn lend_find_not_return(
+    auth: State<'_, Mutex<AuthState>>,
+) -> Result<MyResult<Vec<LendView>>, ()> {
     let db = match auth.lock().unwrap().get_db() {
         Ok(db) => db,
         Err(err) => return Ok(Err(err).into()),
     };
 
-    let options = FindOptions::builder()
-        .sort(doc! {
-            "return_date": 1,
-            "lend_date_time": 1
-        })
-        .limit(50)
-        .build();
+    let filter = doc! {
+        "return_date": {
+            "$exists": 0
+        }
+    };
 
-    Ok(LendView::find(&db, None, options).await.into())
+    Ok(LendView::find(&db, filter, None).await.into())
+}
+
+#[tauri::command]
+pub async fn lend_find_by_filter(
+    auth: State<'_, Mutex<AuthState>>,
+    filter: LendItemFilter,
+) -> Result<MyResult<Vec<LendView>>, ()> {
+    let db = match auth.lock().unwrap().get_db() {
+        Ok(db) => db,
+        Err(err) => return Ok(Err(err).into()),
+    };
+
+    Ok(LendView::find_by_filter(&db, filter).await.into())
 }
 
 #[tauri::command]

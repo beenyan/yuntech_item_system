@@ -71,7 +71,8 @@ const cmd = {
     delete_one: new Command('lend_delete_one'),
     insert_one: new Command('lend_insert_one'),
     update_one: new Command('lend_update_one'),
-    find: new Command('lend_find'),
+    find_not_return: new Command('lend_find_not_return'),
+    find_by_filter: new Command('lend_find_by_filter'),
     lendHistoryFindByYear: new Command('lend_history_find_by_year'),
   },
   maintenanceItem: {
@@ -79,6 +80,7 @@ const cmd = {
     insert_one: new Command('maintenance_insert_one'),
     update_by_id: new Command('maintenance_update_by_id'),
     find: new Command('maintenance_find'),
+    find_by_filter: new Command('maintenance_find_by_filter'),
     historyFindByYear: new Command('maintenance_history_find_by_year'),
   },
 };

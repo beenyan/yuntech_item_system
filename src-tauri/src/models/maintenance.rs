@@ -1,4 +1,4 @@
-use crate::models::item::Item;
+use crate::models::lend::{LendItemId, LendItemView};
 use crate::models::user::User;
 use crate::utils::default::option_deserialize_bson_datetime_from_rfc3339_string;
 use crate::{configs::db::Coll, doc_update, utils::my_result::ErrMsg};
@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MaintenanceUpdate {
     pub(crate) _id: ObjectId,
-    pub(crate) item: Option<ObjectId>,
+    pub(crate) item: Option<LendItemId>,
     pub(crate) manager: Option<ObjectId>,
     pub(crate) cost: Option<u32>,
     pub(crate) content: Option<String>,
@@ -53,7 +53,7 @@ impl MaintenanceUpdate {
 pub struct Maintenance {
     #[serde(default)]
     pub _id: ObjectId,
-    item: ObjectId,
+    item: LendItemId,
     manager: ObjectId,
     cost: u32,
     content: String,
@@ -117,7 +117,7 @@ impl Maintenance {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct MaintenanceView {
     _id: ObjectId,
-    item: Item,
+    item: LendItemView,
     manager: User,
     cost: u32,
     content: String,
@@ -142,6 +142,52 @@ impl MaintenanceView {
         let coll = Self::get_collection(db);
         let cursor = coll.find(filter, options).await?;
         let results = cursor.try_collect::<Vec<Self>>().await?;
+
+        Ok(results)
+    }
+
+    pub async fn find_by_filter(db: &Database, filter: MaintenanceFilter) -> Result<Vec<Self>> {
+        let coll = Self::get_collection(db);
+        let mut query = doc! {};
+
+        if let Some(item) = filter.item.filter(|s| !s.is_empty()) {
+            query.insert(
+                "$or",
+                vec![
+                    doc! { "item.name": { "$regex": &item, "$options": "i" } },
+                    doc! { "item": { "$regex": &item, "$options": "i" } },
+                ],
+            );
+        }
+
+        if let Some(manager) = filter.manager.filter(|s| !s.is_empty()) {
+            query.insert("manager.name", doc! { "$regex": manager, "$options": "i" });
+        }
+
+        if let Some(content) = filter.content.filter(|s| !s.is_empty()) {
+            query.insert("content", doc! { "$regex": content, "$options": "i" });
+        }
+
+        if let Some(cause) = filter.cause.filter(|s| !s.is_empty()) {
+            query.insert("cause", doc! { "$regex": cause, "$options": "i" });
+        }
+
+        if let (Some(start_date), Some(end_date)) = (filter.start_date, filter.end_date) {
+            query.insert(
+                "start_date",
+                doc! {
+                    "$gte": start_date,
+                    "$lt": end_date,
+                },
+            );
+        }
+
+        if let Some(remark) = filter.remark.filter(|s| !s.is_empty()) {
+            query.insert("remark", doc! { "$regex": remark, "$options": "i" });
+        }
+
+        let cursor = coll.find(query, None).await?;
+        let results = cursor.try_collect().await?;
 
         Ok(results)
     }
@@ -177,4 +223,17 @@ impl MaintenanceView {
 
         Ok(results)
     }
+}
+
+#[derive(Debug, Deserialize)]
+pub struct MaintenanceFilter {
+    pub item: Option<String>,
+    pub manager: Option<String>,
+    pub content: Option<String>,
+    pub cause: Option<String>,
+    #[serde(deserialize_with = "option_deserialize_bson_datetime_from_rfc3339_string")]
+    pub start_date: Option<DateTime>,
+    #[serde(deserialize_with = "option_deserialize_bson_datetime_from_rfc3339_string")]
+    pub end_date: Option<DateTime>,
+    pub remark: Option<String>,
 }

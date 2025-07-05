@@ -1,20 +1,29 @@
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
 import { z } from 'zod';
-import { MaintenanceItem, MaintenanceItemForm, MaintenanceItemSchema } from '@/models/MaintenanceItem';
+import { MaintenanceFilter, MaintenanceItem, MaintenanceItemForm, MaintenanceItemSchema } from '@/models/MaintenanceItem';
 import { cmd } from '@/models/Command';
 import { DeleteResultSchema } from '@/models/Mongodb';
-import { ExportData, exportExcelReport } from '@/utils/Export';
+import { exportExcelReport } from '@/utils/Export';
+import { t } from '@/i18n';
 
 export const useMaintenanceItemStore = defineStore('MaintenanceItem', () => {
   const form = ref(new MaintenanceItemForm());
-  const _value = ref<Array<MaintenanceItem> | null>(null);
+  const filter = ref(new MaintenanceFilter());
+  const _value = ref<MaintenanceItem[] | null>(null);
+  const _filterValue = ref<MaintenanceItem[]>([]);
 
   const find = async () => {
     const result = await cmd.maintenanceItem.find.invoke(z.array(MaintenanceItemSchema));
     _value.value = result;
 
     return _value.value;
+  };
+
+  const findByFilter = async () => {
+    _filterValue.value = (await cmd.maintenanceItem.find_by_filter.invoke(z.array(MaintenanceItemSchema), { filter: filter.value.toJSON() })) ?? [];
+
+    return _filterValue.value;
   };
 
   const value = async () => {
@@ -38,12 +47,8 @@ export const useMaintenanceItemStore = defineStore('MaintenanceItem', () => {
   };
 
   const exportExcel = async () => {
-    const values = (await value()) || [];
-
-    const header = [''];
-    const content = [[]];
-    return await exportExcelReport(new ExportData(content, header));
+    return await exportExcelReport(_filterValue.value, t('menu.maintenance-item'));
   };
 
-  return { form, find, deleteById, value, exportExcel, getLendHistoryByYear };
+  return { form, filter, find, findByFilter, deleteById, value, exportExcel, getLendHistoryByYear };
 });

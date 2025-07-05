@@ -11,7 +11,7 @@
             </div>
 
             <div class="col-auto">
-              <QChip color="indigo-8" icon="sell">{{ item.item.name }}</QChip>
+              <QChip color="indigo-8" icon="sell">{{ typeof item.item === 'string' ? item.item : item.item.name }}</QChip>
               <QTooltip class="bg-indigo"> {{ t('maintenance.item') }} </QTooltip>
             </div>
 
@@ -51,7 +51,7 @@
       <!-- CONTENT -->
       <QCard>
         <QList class="row gap-4 q-pa-lg">
-          <CardContent v-for="content in item.card_contents" :content="content" />
+          <CardContent v-for="content in item.cardContent" :content="content" />
         </QList>
       </QCard>
     </QExpansionItem>

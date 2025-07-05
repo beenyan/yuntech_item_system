@@ -7,6 +7,8 @@
           <div class="row gap-x-4 q-gutter-y-md">
             <QSelect
               filled
+              use-input
+              new-value-mode="add"
               class="col-12 col-sm"
               :hide-bottom-space="true"
               v-model.trim="maintenanceItem.form.item"

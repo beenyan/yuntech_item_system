@@ -13,6 +13,7 @@ pub enum ErrMsg {
     ObjectIdMissin,
     DuplicateData,
     FindDataFailed,
+    UserNotFound,
     UpdateNoData,
 }
 
@@ -26,6 +27,7 @@ impl Display for ErrMsg {
             ErrMsg::ObjectIdMissin => "ObjectId Missin",
             ErrMsg::DuplicateData => "Duplicate Data",
             ErrMsg::FindDataFailed => "Find Data Failed",
+            ErrMsg::UserNotFound => "User Not Found",
             ErrMsg::UpdateNoData => "Update No Data",
         };
 

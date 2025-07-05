@@ -13,7 +13,7 @@ export const LendItemSchema = z
   .object({
     _id: ObjectIdSchema,
     borrower_user: UserSchema,
-    lend_item: ItemSchema,
+    lend_item: z.union([ItemSchema, z.string()]),
     lend_item_amount: z.number().min(1),
     mortgage_item: ItemSchema,
     mortgage_item_amount: z.number().min(1),
@@ -34,14 +34,14 @@ export const LendItemSchema = z
       ...value,
       is_return,
       type,
-      get card_contents() {
+      get cardContent() {
         const contensts = [
           value.borrower_user.cardContent,
           value.manager_user.cardContent,
           {
             label: t('item.type.Borrower'),
             items: [
-              { title: t('item.name'), value: value.lend_item.name },
+              { title: t('item.name'), value: typeof value.lend_item === 'string' ? value.lend_item : value.lend_item.name },
               { title: t('lend.amount'), value: value.lend_item_amount },
             ],
           },
@@ -103,6 +103,11 @@ export class LendItemForm {
   }
 
   fromLendItem(lendItem: LendItem) {
+    if (lendItem._id === this._id) {
+      this._id = '';
+      return;
+    }
+
     this.keys().forEach((key) => {
       if (key in this && key in lendItem) {
         this[key] = (lendItem as any)[key];
@@ -110,7 +115,9 @@ export class LendItemForm {
     });
 
     this.borrower_user = cloneDeep(this.borrower_user);
-    (['lend_item', 'mortgage_item', 'manager_user'] as const).forEach((key) => (this[key] = lendItem[key]._id));
+    this.mortgage_item = lendItem.mortgage_item._id;
+    this.manager_user = lendItem.manager_user._id;
+    this.lend_item = typeof lendItem.lend_item === 'string' ? lendItem.lend_item : lendItem.lend_item._id;
   }
 
   async insert() {
@@ -150,5 +157,27 @@ export class ReturnLendFrom {
 
   reset() {
     Object.assign(this, new LendItemForm());
+  }
+}
+
+export class LendItemFilter {
+  lend_item = '';
+  mortgage_item = '';
+  borrower_user = '';
+  manager_user = '';
+  lend_start_date: Date = date.addToDate(date.startOfDate(new Date(), 'date'), { month: -12 });
+  lend_end_date: Date = date.endOfDate(new Date(), 'date');
+  remark = '';
+
+  toJSON() {
+    return {
+      lend_item: this.lend_item,
+      mortgage_item: this.mortgage_item,
+      borrower_user: this.borrower_user,
+      manager_user: this.manager_user,
+      lend_start_date: this.lend_start_date.toISOString(),
+      lend_end_date: this.lend_end_date.toISOString(),
+      remark: this.remark,
+    };
   }
 }

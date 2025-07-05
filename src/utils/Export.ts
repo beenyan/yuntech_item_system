@@ -1,36 +1,37 @@
-import { t } from '@/i18n';
-import { BaseDirectory, createDir, writeBinaryFile } from '@tauri-apps/api/fs';
-import { Workbook } from 'exceljs';
-import { Notify } from 'quasar';
-import { formatChineseDateTime } from '.';
+import { BaseDirectory, writeBinaryFile } from '@tauri-apps/api/fs';
+import { flatten } from 'flat';
+import * as XLSX from 'xlsx';
 
 const FolderName = 'Health Item';
 
-export class ExportData {
-  header: Array<string | undefined | null>;
-  content: Array<Array<any>>;
-
-  constructor(content: Array<Array<any>>, header: Array<string>) {
-    this.content = content;
-    this.header = header;
-  }
-}
-
-export const exportExcelReport = async (data: ExportData, fileName: string = formatChineseDateTime(new Date())) => {
+export const exportExcelReport = async (data: any[], fileName: string) => {
   try {
-    await createDir(FolderName, { dir: BaseDirectory.Document, recursive: true });
+    const worksheet = XLSX.utils.json_to_sheet(jsonToExcelStruct(data));
+    const workbook = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(workbook, worksheet, 'Data');
+    const buffer = XLSX.write(workbook, { bookType: 'xlsx', type: 'array' });
+    const binary = new Uint8Array(buffer);
 
-    const workbook = new Workbook();
-    const worksheet = workbook.addWorksheet(t('manage.menu.lend-item'));
-
-    if (data.header) worksheet.addRow(data.header);
-    worksheet.addRows(data.content);
-
-    const binary = new Uint8Array(await workbook.xlsx.writeBuffer());
     await writeBinaryFile(`${FolderName}/${fileName}.xlsx`, binary, { dir: BaseDirectory.Document });
     return true;
   } catch (error) {
-    Notify.create({ type: 'info', message: `${t('message.exportFailed')}: ${error}` });
+    console.error(error);
     return false;
   }
+};
+
+const jsonToExcelStruct = <T>(datas: T[]) => {
+  const IGNORE_SUFFIX = ['_id', 'created_at', 'updated_at', 'cardContent', 'is_lock'] as const;
+
+  return datas.map((x) => {
+    const Temp = flatten<T, Record<string, any>>(x);
+    for (const [key, _] of Object.entries(Temp)) {
+      if (IGNORE_SUFFIX.some((suffix) => key.includes(suffix))) {
+        delete Temp[key];
+        continue;
+      }
+    }
+
+    return Temp;
+  });
 };

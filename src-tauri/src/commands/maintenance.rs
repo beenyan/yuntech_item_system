@@ -1,7 +1,7 @@
 use crate::{
     models::{
         login::AuthState,
-        maintenance::{Maintenance, MaintenanceUpdate, MaintenanceView},
+        maintenance::{Maintenance, MaintenanceFilter, MaintenanceUpdate, MaintenanceView},
     },
     utils::my_result::MyResult,
 };
@@ -66,6 +66,19 @@ pub async fn maintenance_find(
         .limit(200)
         .build();
     Ok(MaintenanceView::find(&db, None, options).await.into())
+}
+
+#[tauri::command]
+pub async fn maintenance_find_by_filter(
+    auth: State<'_, Mutex<AuthState>>,
+    filter: MaintenanceFilter,
+) -> Result<MyResult<Vec<MaintenanceView>>, ()> {
+    let db = match auth.lock().unwrap().get_db() {
+        Ok(db) => db,
+        Err(err) => return Ok(Err(err).into()),
+    };
+
+    Ok(MaintenanceView::find_by_filter(&db, filter).await.into())
 }
 
 #[tauri::command]

@@ -2,12 +2,9 @@
   <div class="row">
     <div class="col-12 q-px-lg q-pt-lg" :class="{ 'col-sm-7': lendItemStore.form._id }">
       <QList>
-        <!-- Over Due -->
-        <QExpansionItem :default-opened="expansion.opened" popup header-class="bg-indigo-10" v-for="(expansion, index) in expansionItems" :key="index">
+        <QExpansionItem :default-opened="true" popup header-class="bg-indigo-10" v-for="(expansion, index) in expansionItems" :key="index">
           <template v-slot:header>
-            <QBadge color="red" floating style="left: -3px; right: unset" v-if="expansion.showAmount !== false && expansion.items.length">{{
-              expansion.items.length
-            }}</QBadge>
+            <QBadge color="red" floating style="left: -3px; right: unset" v-if="expansion.items.length">{{ expansion.items.length }}</QBadge>
 
             <QItemSection avatar>
               <QIcon name="list_alt" />
@@ -27,7 +24,39 @@
     </div>
 
     <div v-show="lendItemStore.form._id" class="col-12 col-sm-5" :class="{ 'fixed-right': !Screen.xs }">
-      <LendItemForm @on-update="render" method="update" />
+      <LendItemForm @on-update="render()" method="update" />
+    </div>
+
+    <div class="col-12 q-px-lg q-pt-lg" :class="{ 'col-sm-7': lendItemStore.form._id }">
+      <LendItemFilter @on-find="render()" />
+    </div>
+
+    <div class="col-12 q-px-lg q-pt-md" :class="{ 'col-sm-7': lendItemStore.form._id }">
+      <QList>
+        <QExpansionItem :default-opened="true" popup header-class="bg-indigo-10">
+          <template v-slot:header>
+            <QBadge color="red" floating style="left: -3px; right: unset">{{ filterItems.length }}</QBadge>
+
+            <QItemSection avatar>
+              <QIcon name="list_alt" />
+            </QItemSection>
+
+            <QItemSection> 搜尋清單 </QItemSection>
+
+            <QItemSection side>
+              <div class="row items-center" v-if="filterItems.length > 0">
+                <QBtn @click.stop="exportExcel()" dense color="indigo-7" round size="sm" class="q-ml-sm">
+                  <QIcon name="get_app" />
+                  <QTooltip class="bg-indigo"> {{ t('export.excel') }} </QTooltip>
+                </QBtn>
+              </div>
+            </QItemSection>
+          </template>
+          <QSeparator />
+
+          <LendItemInfo :items="filterItems" @on-delete="render()" />
+        </QExpansionItem>
+      </QList>
     </div>
   </div>
 
@@ -43,11 +72,12 @@ import { Screen, QExpansionItem, QList, QSeparator, QBadge, QItemSection, QIcon,
 import { LendItem } from '@/models/LendItem';
 import { useLendItemStore } from '@/stores';
 import { t } from '@/i18n';
+import LendItemFilter from '@/components/Scrap/LendItemFilter.vue';
 
 const lendItemStore = useLendItemStore();
-const returnItems = ref<Array<LendItem>>([]);
 const notReturnItems = ref<Array<LendItem>>([]);
 const overDueItems = ref<Array<LendItem>>([]);
+const filterItems = ref<Array<LendItem>>([]);
 const expansionItems = ref([
   {
     items: overDueItems,
@@ -59,26 +89,23 @@ const expansionItems = ref([
     label: t('lend.type.not_returned'),
     opened: true,
   },
-  {
-    items: returnItems,
-    label: t('lend.type.return'),
-    showAmount: false,
-  },
 ]);
 
 const render = async () => {
   await lendItemStore.find();
-  returnItems.value = await lendItemStore.getByType('return');
-  notReturnItems.value = await lendItemStore.getByType('notReturn');
   overDueItems.value = await lendItemStore.getByType('overDue');
+  notReturnItems.value = await lendItemStore.getByType('notReturn');
+  filterItems.value = await lendItemStore.findByFilter();
 };
 
-const exportExcle = async () => {
+const exportExcel = async () => {
   const result = await lendItemStore.exportExcel();
 
-  if (!result) return;
-
-  Notify.create({ type: 'positive', message: t('message.exportSuccess') });
+  if (result) {
+    Notify.create({ type: 'positive', message: t('message.exportSuccess') });
+  } else {
+    Notify.create({ type: 'negative', message: t('message.exportFailed') });
+  }
 };
 
 onMounted(() => render());

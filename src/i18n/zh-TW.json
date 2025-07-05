@@ -6,6 +6,7 @@
   "update": "修改",
   "back": "返回",
   "time": "時間",
+  "filter": "篩選",
   "login": {
     "key": "登入",
     "ip": "IP",
@@ -33,6 +34,8 @@
   "lend": {
     "money": "金錢",
     "lend_time": "借出時間",
+    "lend_start_time": "借出開始時間",
+    "lend_end_time": "借出結束時間",
     "due_date": "到期時間",
     "return_date": "歸還時間",
     "amount": "數量",
@@ -89,6 +92,8 @@
     }
   },
   "export": {
+    "excel": "匯出 Excel",
+    "word": "匯出 Word",
     "lend_history": "借物紀錄匯出"
   },
   "message": {
